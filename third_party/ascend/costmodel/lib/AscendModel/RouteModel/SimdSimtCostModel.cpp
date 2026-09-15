@@ -778,8 +778,11 @@ estimateSimdSimtCandidatesImpl(const SimdSimtFeatureSummary &features,
   report.allSimtOnlyCandidateLegal =
       options.compileOn91095 && !features.hasExplicitScope &&
       features.simtAnchors.kernelLowerability.allSimtOnly;
-  report.mixedCandidateLegal = !features.hasExplicitScope &&
-                               options.compileOn91095 &&
+  // A user-authored vector_mode scope no longer vetoes the mixed candidate:
+  // the pin mechanism routes the scope's Stage on the user-specified side.
+  // Scopes the Route Model cannot reason about (cube / unknown modes) are
+  // rejected later by the selector's actionSupported gate.
+  report.mixedCandidateLegal = options.compileOn91095 &&
                                features.simtAnchors.count > 0 &&
                                features.simtAnchors.kernelLowerability.mixed;
   report.includeFeaturesInJSON = options.includeFeaturesInJSON;
